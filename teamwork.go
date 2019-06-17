@@ -3,6 +3,7 @@ package teamwork
 import (
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 )
 
@@ -39,5 +40,22 @@ func NewClient(token string, options ...ClientOption) *DefaultClient {
 	return c
 }
 
+func AccountPrefixOption(prefix string) ClientOption {
 
+	return func(client *DefaultClient) {
 
+		uri, err := url.Parse(client.uri)
+		if err != nil {
+			client.log.Fatal("Unable to parse api uri: %v", err)
+			return
+		}
+
+		hostname := prefix + "." + uri.Hostname()
+		if len(uri.Port()) != 0 {
+			hostname += ":" + uri.Port()
+		}
+
+		uri.Host = hostname
+		client.uri = uri.String()
+	}
+}
