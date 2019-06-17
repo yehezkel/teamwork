@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 )
 
 const (
-	TWHOST = "https://teamwork.com"
+	TWHOST = "teamwork.com"
 )
 
 type httpClient interface {
@@ -24,10 +25,10 @@ type DefaultClient struct {
 	log        *log.Logger
 }
 
-func NewClient(token string, options ...ClientOption) *DefaultClient {
+func NewClient(prefix, token string, options ...ClientOption) *DefaultClient {
 
 	c := &DefaultClient{
-		uri:        TWHOST,
+		uri:        "https://" + prefix + "." + TWHOST,
 		token:      token,
 		httpclient: &http.Client{},
 		log:        log.New(os.Stdout, "teamwork", log.LstdFlags),
@@ -40,7 +41,7 @@ func NewClient(token string, options ...ClientOption) *DefaultClient {
 	return c
 }
 
-func AccountPrefixOption(prefix string) ClientOption {
+func EuUriOption(prefix string) ClientOption {
 
 	return func(client *DefaultClient) {
 
@@ -50,12 +51,18 @@ func AccountPrefixOption(prefix string) ClientOption {
 			return
 		}
 
-		hostname := prefix + "." + uri.Hostname()
-		if len(uri.Port()) != 0 {
-			hostname += ":" + uri.Port()
+		tmpBuilder := func(parts ...string) string {
+			return strings.Join(parts, ".")
 		}
 
-		uri.Host = hostname
+		parts := strings.Split(uri.Hostname(), ".")
+		build := tmpBuilder(parts[0], "eu", tmpBuilder(parts[1:]...))
+
+		if len(uri.Port()) != 0 {
+			build += ":" + uri.Port()
+		}
+
+		uri.Host = build
 		client.uri = uri.String()
 	}
 }
