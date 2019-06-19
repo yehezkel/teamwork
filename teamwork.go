@@ -41,13 +41,13 @@ func NewClient(prefix, token string, options ...ClientOption) *DefaultClient {
 	return c
 }
 
-func EuUriOption(prefix string) ClientOption {
-
+func EuUriOption() ClientOption {
+	//TODO: Rewrite this function
 	return func(client *DefaultClient) {
 
 		uri, err := url.Parse(client.uri)
 		if err != nil {
-			client.log.Fatal("Unable to parse api uri: %v", err)
+			client.log.Fatalf("Unable to parse api uri: %v", err)
 			return
 		}
 
