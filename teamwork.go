@@ -1,6 +1,9 @@
 package teamwork
 
 import (
+	"encoding/base64"
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -29,7 +32,7 @@ func NewClient(prefix, token string, options ...ClientOption) *DefaultClient {
 
 	c := &DefaultClient{
 		uri:        "https://" + prefix + "." + TWHOST,
-		token:      token,
+		token:      base64.StdEncoding.EncodeToString([]byte(token)),
 		httpclient: &http.Client{},
 		log:        log.New(os.Stdout, "teamwork", log.LstdFlags),
 	}
@@ -39,6 +42,37 @@ func NewClient(prefix, token string, options ...ClientOption) *DefaultClient {
 	}
 
 	return c
+}
+
+func (client *DefaultClient) DoRequest(method, path string, payload, out interface{}) error {
+
+	uri := client.uri + "/" + path
+	request, err := http.NewRequest(method, uri, nil)
+	if err != nil {
+		return err
+	}
+	//add payload for post,put,del
+	request.Header.Add("Authorization", "Basic "+client.token)
+
+	resp, err := client.httpclient.Do(request)
+	if err != nil {
+		return err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	//client.log.Printf("Response: %v", string(body))
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(body, out)
+	if err != nil {
+		return err
+	}
+
+	//client.log.Printf("Response: %v", out)
+
+	return nil
 }
 
 func EuUriOption() ClientOption {
