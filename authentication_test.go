@@ -23,16 +23,42 @@ func TestBuildAuthenticationClient(t *testing.T) {
 func TestFirstRequest(t *testing.T) {
 
 	client := BuildAuthenticationClient(
-		"keeyyy",
+		"123",
 	)
 
 	auth := Authentication{
-		client,
+		AuthEndPoint{client},
 	}
 
-	err := auth.Authenticate()
+	out, err := auth.Authenticate()
 	if err != nil {
 		t.Errorf("error: %v", err)
 	}
+
+	t.Logf("log: %v", out)
+
+}
+
+func TestSecondRequest(t *testing.T) {
+
+	client := BuildAuthenticationClient(
+		"123",
+	)
+
+	out := struct {
+		SUCCESS string
+		Account struct {
+			Firstname string
+		}
+	}{}
+
+	auth := AuthEndPoint{client}
+
+	err := auth.Authenticate(&out)
+	if err != nil {
+		t.Errorf("error: %v", err)
+	}
+
+	t.Logf("log: %v", out.Account.Firstname)
 
 }

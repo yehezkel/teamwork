@@ -7,27 +7,40 @@ const (
 // BuildAuthenticationClient build a default api client base on the particular uri
 // pattern for the authentication api endpoint
 func BuildAuthenticationClient(token string, options ...ClientOption) *DefaultClient {
-
 	return NewClient(AUTHPREFIX, token, options...)
 }
 
 type Authentication struct {
+	//ApiClient *DefaultClient
+	AuthEndPoint
+}
+
+func (auth Authentication) Authenticate() (*Account, error) {
+
+	out := AccountResponse{}
+	err := auth.AuthEndPoint.Authenticate(&out)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return out.Account, nil
+}
+
+type AuthEndPoint struct {
 	ApiClient *DefaultClient
 }
 
-func (auth Authentication) Authenticate() error {
+func (ap AuthEndPoint) Authenticate(out interface{}) error {
 
 	endpoint := "authenticate.json"
-	//var out interface{}
-	out := AccountResponse{}
-	err := auth.ApiClient.DoRequest("GET", endpoint, nil, &out)
+	err := ap.ApiClient.DoRequest("GET", endpoint, nil, out)
 
 	if err != nil {
 		return err
 	}
-	auth.ApiClient.log.Printf("Response: %#v", out.Account)
-	return nil
 
+	return nil
 }
 
 type Account struct {
