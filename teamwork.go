@@ -69,7 +69,7 @@ func (client *DefaultClient) DoRequest(method, path string, payload, out interfa
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
-	//client.log.Printf("Response: %v", string(body))
+	client.log.Printf("Response: %v", string(body))
 	if err != nil {
 		return err
 	}
@@ -79,7 +79,7 @@ func (client *DefaultClient) DoRequest(method, path string, payload, out interfa
 		return err
 	}
 
-	//client.log.Printf("Response: %v", out)
+	client.log.Printf("Response: %v", out)
 
 	return nil
 }

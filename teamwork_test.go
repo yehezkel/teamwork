@@ -4,6 +4,10 @@ import (
 	"testing"
 )
 
+var (
+	testingKey string = "********"
+)
+
 func TestEuUriOption(t *testing.T) {
 
 	var opt ClientOption = EuUriOption()
@@ -34,4 +38,9 @@ func TestEuUriOption(t *testing.T) {
 			t.Errorf("Uri missmatch %s != %s", client.uri, testCase.exp)
 		}
 	}
+}
+
+func getTestingClient() *DefaultClient {
+
+	return NewClient("gpnerds", testingKey)
 }

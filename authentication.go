@@ -4,9 +4,9 @@ const (
 	AUTHPREFIX = "api"
 )
 
-func NewAuthentication(client ApiClient) Authentication {
+func NewAuthenticationApi(client ApiClient) AuthenticationApi {
 
-	return Authentication{
+	return AuthenticationApi{
 		AuthEndPoint{
 			Client: client,
 		},
@@ -19,12 +19,12 @@ func BuildAuthenticationClient(token string, options ...ClientOption) *DefaultCl
 	return NewClient(AUTHPREFIX, token, options...)
 }
 
-type Authentication struct {
+type AuthenticationApi struct {
 	//ApiClient *DefaultClient
 	AuthEndPoint
 }
 
-func (auth Authentication) Authenticate() (*Account, error) {
+func (auth AuthenticationApi) Authenticate() (*Account, error) {
 
 	out := AccountResponse{}
 	err := auth.AuthEndPoint.Authenticate(&out)
