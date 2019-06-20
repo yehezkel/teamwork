@@ -4,7 +4,16 @@ const (
 	AUTHPREFIX = "api"
 )
 
-// BuildAuthenticationClient build a default api client base on the particular uri
+func NewAuthentication(client ApiClient) Authentication {
+
+	return Authentication{
+		AuthEndPoint{
+			Client: client,
+		},
+	}
+}
+
+// BuildAuthenticationClient build a default ApiClient instance base on the particular uri
 // pattern for the authentication api endpoint
 func BuildAuthenticationClient(token string, options ...ClientOption) *DefaultClient {
 	return NewClient(AUTHPREFIX, token, options...)
@@ -28,13 +37,13 @@ func (auth Authentication) Authenticate() (*Account, error) {
 }
 
 type AuthEndPoint struct {
-	ApiClient *DefaultClient
+	Client ApiClient
 }
 
 func (ap AuthEndPoint) Authenticate(out interface{}) error {
 
 	endpoint := "authenticate.json"
-	err := ap.ApiClient.DoRequest("GET", endpoint, nil, out)
+	err := ap.Client.DoRequest("GET", endpoint, nil, out)
 
 	if err != nil {
 		return err

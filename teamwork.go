@@ -20,6 +20,10 @@ type httpClient interface {
 	Do(*http.Request) (*http.Response, error)
 }
 
+type ApiClient interface {
+	DoRequest(method, path string, payload, out interface{}) error
+}
+
 type ClientOption func(client *DefaultClient)
 
 type DefaultClient struct {
@@ -33,7 +37,7 @@ func NewClient(prefix, token string, options ...ClientOption) *DefaultClient {
 
 	c := &DefaultClient{
 		uri:        "https://" + prefix + "." + TWHOST,
-		token:      base64.StdEncoding.EncodeToString([]byte(token)),
+		token:      EncodeApiKey(token),
 		httpclient: &http.Client{},
 		log:        log.New(os.Stdout, "teamwork", log.LstdFlags),
 	}
@@ -104,4 +108,8 @@ func EuUriOption() ClientOption {
 		uri.Host = build
 		client.uri = uri.String()
 	}
+}
+
+func EncodeApiKey(key string) string {
+	return base64.StdEncoding.EncodeToString([]byte(key))
 }

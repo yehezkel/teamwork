@@ -10,7 +10,7 @@ func TestBuildAuthenticationClient(t *testing.T) {
 	expUri := "https://api.teamwork.com"
 	client := BuildAuthenticationClient(token)
 
-	if client.token != token {
+	if client.token != EncodeApiKey(token) {
 		t.Errorf("token missmatch got %s expecting %s", client.token, token)
 	}
 
