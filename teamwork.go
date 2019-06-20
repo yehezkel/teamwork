@@ -3,6 +3,7 @@ package teamwork
 import (
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -57,6 +58,10 @@ func (client *DefaultClient) DoRequest(method, path string, payload, out interfa
 	resp, err := client.httpclient.Do(request)
 	if err != nil {
 		return err
+	}
+
+	if (resp.StatusCode < 200 || resp.StatusCode > 299) && resp.StatusCode != 304 {
+		return fmt.Errorf("Unexpected response code: %d", resp.StatusCode)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)

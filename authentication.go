@@ -18,13 +18,24 @@ type Authentication struct {
 func (auth Authentication) Authenticate() error {
 
 	endpoint := "authenticate.json"
-	var out interface{}
+	//var out interface{}
+	out := AccountResponse{}
 	err := auth.ApiClient.DoRequest("GET", endpoint, nil, &out)
 
 	if err != nil {
 		return err
 	}
-	auth.ApiClient.log.Printf("Response: %v", out)
+	auth.ApiClient.log.Printf("Response: %#v", out.Account)
 	return nil
 
+}
+
+type Account struct {
+	Firstname string `json:"firstname"`
+	Id        string `json:"id"`
+}
+
+type AccountResponse struct {
+	Status  string   `json:"STATUS"`
+	Account *Account `json:"account"`
 }
