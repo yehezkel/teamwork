@@ -18,18 +18,16 @@ func (c CommentApi) Fetch(id string) (*Comment, error) {
 
 func (c CommentApi) Create(n *NewComment, resource string, resourceId string) (string, error) {
 
-	endpoint := resource + "/" + resourceId + "/comments.json"
-	out := struct {
-		Id     string
-		STATUS string
-	}{}
+	payload := &newCommentRequest{
+		Comment: n,
+	}
 
-	err := c.CommentEndPoint.Client.DoRequest("POST", endpoint, n, &out)
+	id, err := c.CommentEndPoint.Create(payload, resource, resourceId)
 	if err != nil {
 		return "", err
 	}
 
-	return out.Id, nil
+	return id, nil
 }
 
 type CommentEndPoint struct {
@@ -46,6 +44,19 @@ func (c CommentEndPoint) Fetch(id string, out interface{}) error {
 	}
 
 	return nil
+}
+
+func (c CommentEndPoint) Create(payload interface{}, resource string, resourceId string) (string, error) {
+
+	endpoint := resource + "/" + resourceId + "/comments.json"
+	out := newCommentResponse{}
+
+	err := c.Client.DoRequest("POST", endpoint, payload, &out)
+	if err != nil {
+		return "", err
+	}
+
+	return out.CommentId, nil
 }
 
 type FetchCommentResponse struct {
@@ -70,4 +81,13 @@ type NewComment struct {
 	Notify      string `json:"notify"`
 	Private     bool   `json:"isprivate"`
 	ContentType string `json:"content-type"`
+}
+
+type newCommentRequest struct {
+	Comment *NewComment `json:"comment"`
+}
+
+type newCommentResponse struct {
+	CommentId string
+	STATUS    string
 }
