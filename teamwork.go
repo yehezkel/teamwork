@@ -1,6 +1,7 @@
 package teamwork
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -52,7 +53,25 @@ func NewClient(prefix, token string, options ...ClientOption) *DefaultClient {
 func (client *DefaultClient) DoRequest(method, path string, payload, out interface{}) error {
 
 	uri := client.uri + "/" + path
-	request, err := http.NewRequest(method, uri, nil)
+	var err error
+	var request *http.Request
+
+	if method == "GET" {
+		request, err = http.NewRequest(method, uri, nil)
+	} else {
+
+		//json encode payload
+		b, err := json.Marshal(payload)
+		client.log.Printf("uri: %s Payload: %v", uri, string(b))
+		if err != nil {
+			return err
+		}
+
+		request, err = http.NewRequest(
+			method, uri, bytes.NewReader(b),
+		)
+	}
+
 	if err != nil {
 		return err
 	}
@@ -63,6 +82,8 @@ func (client *DefaultClient) DoRequest(method, path string, payload, out interfa
 	if err != nil {
 		return err
 	}
+
+	client.log.Printf("raw response: %#v", resp)
 
 	if (resp.StatusCode < 200 || resp.StatusCode > 299) && resp.StatusCode != 304 {
 		return fmt.Errorf("Unexpected response code: %d", resp.StatusCode)
