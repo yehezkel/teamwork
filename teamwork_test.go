@@ -1,11 +1,8 @@
 package teamwork
 
 import (
+	"os"
 	"testing"
-)
-
-var (
-	testingKey string = "********"
 )
 
 func TestEuUriOption(t *testing.T) {
@@ -40,7 +37,11 @@ func TestEuUriOption(t *testing.T) {
 	}
 }
 
+func getTestingKey() string {
+	return os.Getenv("twkey")
+}
+
 func getTestingClient() *DefaultClient {
 
-	return NewClient("gpnerds", testingKey)
+	return NewClient("gpnerds", getTestingKey())
 }

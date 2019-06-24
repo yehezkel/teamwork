@@ -23,7 +23,7 @@ func TestBuildAuthenticationClient(t *testing.T) {
 func TestFirstRequest(t *testing.T) {
 
 	client := BuildAuthenticationClient(
-		testingKey,
+		getTestingKey(),
 	)
 
 	auth := AuthenticationApi{
@@ -42,7 +42,7 @@ func TestFirstRequest(t *testing.T) {
 func TestSecondRequest(t *testing.T) {
 
 	client := BuildAuthenticationClient(
-		testingKey,
+		getTestingKey(),
 	)
 
 	out := struct {
