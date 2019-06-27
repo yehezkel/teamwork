@@ -18,22 +18,16 @@ func (t TaskApi) Fetch(id string) (*TodoItem, error) {
 	return out.Task, nil
 }
 
-func (t TaskApi) Update(id string, task *EditTaskPayload) (*TodoItem, error) {
+func (t TaskApi) Update(id string, task *EditTodoItem) error {
 
 	var out interface{}
 	payload := struct {
-		task *EditTodoItem `json:"todo-item"`
+		Task *EditTodoItem `json:"todo-item"`
 	}{
 		task,
 	}
 
-	err := t.TaskEndPoint.Update(id, payload, &out)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return out.Task, nil
+	return t.TaskEndPoint.Update(id, payload, &out)
 }
 
 type TaskEndPoint struct {
@@ -75,11 +69,6 @@ type TodoItem struct {
 type TaskResponse struct {
 	Status string    `json:"STATUS"`
 	Task   *TodoItem `json:"todo-item"`
-}
-
-type EditTaskPayload struct {
-	Status string        `json:"STATUS"`
-	Task   *EditTodoItem `json:"todo-item"`
 }
 
 type EditTodoItem struct {
