@@ -62,7 +62,7 @@ func (client *DefaultClient) DoRequest(method, path string, payload, out interfa
 
 		//json encode payload
 		b, err := json.Marshal(payload)
-		client.log.Printf("uri: %s Payload: %v", uri, string(b))
+		//client.log.Printf("uri: %s Payload: %v", uri, string(b))
 		if err != nil {
 			return err
 		}
@@ -83,14 +83,14 @@ func (client *DefaultClient) DoRequest(method, path string, payload, out interfa
 		return err
 	}
 
-	client.log.Printf("raw response: %#v", resp)
+	//client.log.Printf("raw response: %#v", resp)
 
 	if (resp.StatusCode < 200 || resp.StatusCode > 299) && resp.StatusCode != 304 {
 		return fmt.Errorf("Unexpected response code: %d", resp.StatusCode)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
-	client.log.Printf("Response: %v", string(body))
+	//client.log.Printf("Response: %v", string(body))
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func (client *DefaultClient) DoRequest(method, path string, payload, out interfa
 		return err
 	}
 
-	client.log.Printf("Response: %v", out)
+	//client.log.Printf("Response: %v", out)
 
 	return nil
 }
